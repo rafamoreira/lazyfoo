@@ -1,5 +1,6 @@
 //Using SDL and standard IO
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 #include <stdio.h>
 #include <string>
 
@@ -42,16 +43,58 @@ SDL_Surface* gKeyPressSurface[ KEY_PRESS_SURFACE_TOTAL ];
 // current displayed image
 SDL_Surface* gStretchedSurface = NULL;
 
+bool init()
+{
+    // initialization flag
+    bool success = true;
+
+    //initialize SDL
+
+    if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
+    {
+        printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+        success = false;
+    }
+    else
+    {
+        //Create window
+        gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH,
+                                    SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
+        if ( gWindow == NULL )
+        {
+            printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError());
+            success = false;
+        }
+        else
+        {
+            // initialize PNG loading
+            int imgFlags = IMG_INIT_PNG;
+            if(!(IMG_Init(imgFlags) & imgFlags))
+            {
+                printf("SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError());
+                success = false;
+
+            }
+            else
+            {
+                //Get window surface
+                gScreenSurface = SDL_GetWindowSurface( gWindow );
+            }
+        }
+    }
+    return success;
+}
+
 SDL_Surface* loadSurface(std::string path)
 {
 	// The final optimized image
 	SDL_Surface* optimizedSurface = NULL;
 
 	//load image at specified path
-	SDL_Surface* loadedSurface = SDL_LoadBMP(path.c_str());
+	SDL_Surface* loadedSurface = IMG_Load(path.c_str());
 	if (loadedSurface == NULL)
 	{
-		printf("Unable to load image %s! SDL Error: %s\n", path.c_str(), SDL_GetError());
+		printf("Unable to load image %s! SDL Error: %s\n", path.c_str(), IMG_GetError());
 	}
 	else
 	{
@@ -69,36 +112,6 @@ SDL_Surface* loadSurface(std::string path)
 	return optimizedSurface;
 }
 
-bool init()
-{
-	// initialization flag
-	bool success = true;
-
-	//initialize SDL
-
-	if ( SDL_Init( SDL_INIT_VIDEO ) < 0 )
-	{
-		printf( "SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
-		success = false;
-	}
-	else
-	{
-		//Create window
-		gWindow = SDL_CreateWindow( "SDL Tutorial", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH,
-		                            SCREEN_HEIGHT, SDL_WINDOW_SHOWN );
-		if ( gWindow == NULL )
-		{
-			printf( "Window could not be created! SDL_Error: %s\n", SDL_GetError());
-			success = false;
-		}
-		else
-		{
-			//Get window surface
-			gScreenSurface = SDL_GetWindowSurface( gWindow );
-		}
-	}
-	return success;
-}
 
 bool loadMedia()
 {
@@ -106,7 +119,7 @@ bool loadMedia()
 	bool success = true;
 
 	//load default surface
-	gKeyPressSurface[ KEY_PRESS_SURFACE_DEFAULT ] = loadSurface("stretch.bmp");
+	gKeyPressSurface[ KEY_PRESS_SURFACE_DEFAULT ] = loadSurface("loaded.png");
 	if ( gKeyPressSurface[ KEY_PRESS_SURFACE_DEFAULT] == NULL )
 	{
 		printf( "Unable to load default image");

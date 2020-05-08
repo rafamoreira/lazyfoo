@@ -74,6 +74,10 @@ SET(SDL2_SEARCH_PATHS
 	/opt/local # DarwinPorts
 	/opt/csw # Blastwave
 	/opt
+	/cpplibs
+	/cpplibs/SDL2-2.0.12/include
+	/cpplibs/SDL2-2.0.12/x64
+
 )
 
 FIND_PATH(SDL2_INCLUDE_DIR SDL.h
