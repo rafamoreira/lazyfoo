@@ -7,11 +7,12 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
 find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIR})
+find_package(SDL2_image REQUIRED)
+include_directories(${SDL2_INCLUDE_DIR} ${SDL2_IMAGE_INCLUDE_DIR})
 
 
 set(SOURCE_FILES main.cpp)
 
 add_executable(lazyfoo ${SOURCE_FILES})
-target_link_libraries(lazyfoo ${SDL2_LIBRARY})
+target_link_libraries(lazyfoo ${SDL2_LIBRARY} ${SDL2_IMAGE_LIBRARIES})
 # add_executable(lazyfoo main.cpp)
